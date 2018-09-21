@@ -134,7 +134,7 @@ export class State {
   ];
 
   [key: string]: any;
-  learningRate = 0.018;
+  learningRate = 0.03;
   regularizationRate = 0;
   showTestData = false;
   noise = 0;

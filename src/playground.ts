@@ -69,6 +69,7 @@ let INPUTS: {[name: string]: InputFeature} = {
   "xTimesY": {f: (x, y) => x * y, label: "X_1X_2"},
   "sinX": {f: (x, y) => Math.sin(x), label: "sin(X_1)"},
   "sinY": {f: (x, y) => Math.sin(y), label: "sin(X_2)"},
+  "cosX": {f: (x, y) => Math.cos(x), label: "cos(X_1)"},
 };
 
 let HIDABLE_CONTROLS = [
@@ -162,7 +163,7 @@ let linkWidthScale = d3.scale.linear()
   .clamp(true);
 let colorScale = d3.scale.linear<string>()
                      .domain([-1, 0, 1])
-                     .range(["#f59322", "#e8eaeb", "#0877bd"])
+                     .range(["#087000", "#e8eaeb", "#ff0000"])
                      .clamp(true);
 let iter = 0;
 let trainData: Example2D[] = [];
