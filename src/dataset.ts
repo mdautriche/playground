@@ -50,6 +50,75 @@ export function shuffle(array: any[]): void {
 
 export type DataGenerator = (numSamples: number, noise: number) => Example2D[];
 
+
+//Fonction test lecture fichier contenant un jeu de données:
+export function classifyFileData(numSamples: number, noise: number):
+  Example2D[] {
+    let points: Example2D[] = [];
+    let fichier: string ="test.txt";
+    function lireFichierTexte(fichier)
+      {
+       //On lance la requête pour récupérer le fichier
+       var fichierBrut = new XMLHttpRequest();
+       fichierBrut.open("GET", fichier, false);
+       //On utilise une fonction sur l'événement "onreadystate"
+       fichierBrut.onreadystatechange = function ()
+       {
+         if(fichierBrut.readyState === 4)
+         {
+           //On contrôle bien quand le statut est égal à 0
+           if(fichierBrut.status === 200 || fichierBrut.status == 0)
+           {
+             //On peut récupérer puis traiter le texte du fichier
+             var texteComplet = fichierBrut.responseText;
+             var ss: string[] = texteComplet.split(";");
+             var k: number = 1;
+             var x: number;
+             var y: number;
+             var label: number;
+
+             for(var i of ss){
+               //alert(parseInt(i));
+               if (k==1){
+                 x = parseInt(i);
+               }else if (k==2){
+                 y = parseInt(i);
+               }else if (k==3){
+                 label = parseInt(i);
+                 k=0;
+                 points.push({x, y, label});
+               }
+               k++;
+             }
+           //alert(texteComplet);
+           }
+         }
+       }
+       fichierBrut.send(null);
+      }
+  lireFichierTexte(fichier);
+    return points;
+  }
+
+
+
+//Fonction de test génération aléatoire d'un jeu de données:
+export function classifyRandData(numSamples: number, noise: number):
+  Example2D[] {
+    let points: Example2D[] = [];
+
+    function genRand(max: number, min: number, label: number) {
+      for(let i = 0; i < numSamples / 2; i++){
+        let x = randUniform(max, min);
+        let y = randUniform(max, min);
+        points.push({x, y, label});
+      }
+    }
+    genRand(5, -5, 1);
+    genRand(5, -5, -1);
+    return points;
+}
+
 export function classifyTwoGaussData(numSamples: number, noise: number):
     Example2D[] {
   let points: Example2D[] = [];
