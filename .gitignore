@@ -3,3 +3,4 @@ typings/
 dist/
 *.log
 .vscode
+package-lock.json
