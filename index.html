@@ -39,9 +39,6 @@ limitations under the License.
   <link rel="stylesheet" href="bundle.css" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons" rel="stylesheet" type="text/css">
   <script src="lib.js"></script>
-  <!-- Include global.js first -->
-  <script src="global.js" type="text/javascript"></script>
-  <script src="reader.ts"></script>
 </head>
 <body>
   <!-- GitHub link -->
@@ -53,24 +50,11 @@ limitations under the License.
   </a>
   <!-- Header -->
   <header>
-    <h1 class="l--page"><b>Projet Playground SVM/NN</b></h1>
+    <h1 class="l--page">Tinker With a <b>Neural Network</b> <span class="optional">Right Here </span>in Your Browser.<br>Don’t Worry, You Can’t Break It. We Promise.</h1>
   </header>
 
   <!-- Top Controls -->
   <div id="top-controls">
-
-    <style>
-  .thumb {
-    height: 75px;
-    border: 1px solid #000;
-    margin: 10px 5px 0 0;
-  }
-</style>
-<input type='file' accept='text/plain' onchange='openFile(event)'><br>
-<!--
-<input type="file" id="files" name="files[]" multiple />
-<output id="list"></output>
--->
     <div class="container l--page">
       <div class="timeline-controls">
         <button class="mdl-button mdl-js-button mdl-button--icon ui-resetButton" id="reset-button" title="Reset the network">
@@ -191,9 +175,6 @@ limitations under the License.
           </div>
           <div class="dataset" title="File">
             <canvas class="data-thumbnail" data-dataset="file"></canvas>
-          </div>
-          <div class="dataset" title="FileInput">
-            <canvas class="data-thumbnail" data-dataset="fileInput"></canvas>
           </div>
         </div>
       </div>

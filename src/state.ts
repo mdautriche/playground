@@ -15,8 +15,6 @@ limitations under the License.
 
 import * as nn from "./nn";
 import * as dataset from "./dataset";
-import * as reader from "./reader";
-import * as global from "./global";
 
 /** Suffix added to the state when storing if a control is hidden or not. */
 const HIDE_STATE_SUFFIX = "_hide";
@@ -44,7 +42,6 @@ export let datasets: {[key: string]: dataset.DataGenerator} = {
   "spiral": dataset.classifySpiralData,
   "rand": dataset.classifyRandData,
   "file": dataset.classifyFileData,
-  "fileInput": reader.classifyFileDataInput,
 };
 
 /** A map between dataset names and functions that generate regression data. */
@@ -135,12 +132,10 @@ export class State {
     {name: "tutorial", type: Type.STRING},
     {name: "problem", type: Type.OBJECT, keyMap: problems},
     {name: "initZero", type: Type.BOOLEAN},
-    {name: "hideText", type: Type.BOOLEAN},
-    {name: "dataSave", type: Type.OBJECT[]}
+    {name: "hideText", type: Type.BOOLEAN}
   ];
 
   [key: string]: any;
-  dataSave = global.datas;
   learningRate = 0.03;
   regularizationRate = 0;
   showTestData = false;
