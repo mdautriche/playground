@@ -58,49 +58,41 @@ export function classifyFileData(numSamples: number, noise: number):
     let fichier: string ="test.txt";
     function lireFichierTexte(fichier)
       {
-       //On lance la requête pour récupérer le fichier
-       var fichierBrut = new XMLHttpRequest();
-       fichierBrut.open("GET", fichier, false);
-       //On utilise une fonction sur l'événement "onreadystate"
-       fichierBrut.onreadystatechange = function ()
-       {
-         if(fichierBrut.readyState === 4)
-         {
-           //On contrôle bien quand le statut est égal à 0
-           if(fichierBrut.status === 200 || fichierBrut.status == 0)
-           {
-             //On peut récupérer puis traiter le texte du fichier
-             var texteComplet = fichierBrut.responseText;
-             var ss: string[] = texteComplet.split(";");
-             var k: number = 1;
-             var x: number;
-             var y: number;
-             var label: number;
+	       //On lance la requête pour récupérer le fichier
+	       var fichierBrut = new XMLHttpRequest();
+	       fichierBrut.open("GET", fichier, false);
+	       fichierBrut.send();
 
-             for(var i of ss){
-               //alert(parseInt(i));
-               if (k==1){
-                 x = parseInt(i);
-               }else if (k==2){
-                 y = parseInt(i);
-               }else if (k==3){
-                 label = parseInt(i);
-                 k=0;
-                 points.push({x, y, label});
-               }
-               k++;
-             }
-           //alert(texteComplet);
-           }
-         }
+	       //On peut récupérer puis traiter le texte du fichier
+	       var texteComplet = fichierBrut.responseText;
+	       //alert(texteComplet);
+	       var re = /;\s*/;
+	       var ss: string[] = texteComplet.split(re);
+	       var k: number = 1;
+	       var x: number;
+	       var y: number;
+	       var label: number;
+
+	       for(var i of ss){
+	       	if (k==1){
+	        	x = parseInt(i);
+	        	//alert("x="+x);
+	        }else if (k==2){
+	        	y = parseInt(i);
+	        	//alert("y="+y);
+	        }else if (k==3){
+	            label = parseInt(i);
+	            //alert("label="+label);
+	            k=0;
+	            points.push({x, y, label});
+	            //alert(x+";"+y+";"+label);
+	        }
+	        k++;
+	       }
        }
-       fichierBrut.send(null);
-      }
-  lireFichierTexte(fichier);
-    return points;
+	  lireFichierTexte(fichier);
+	  return points;
   }
-
-
 
 //Fonction de test génération aléatoire d'un jeu de données:
 export function classifyRandData(numSamples: number, noise: number):
