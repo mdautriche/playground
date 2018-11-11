@@ -42,6 +42,7 @@ export let datasets: {[key: string]: dataset.DataGenerator} = {
   "spiral": dataset.classifySpiralData,
   "rand": dataset.classifyRandData,
   "file": dataset.classifyFileData,
+  "fileInput": dataset.classifyInputFileData,
 };
 
 /** A map between dataset names and functions that generate regression data. */

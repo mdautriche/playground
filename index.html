@@ -50,11 +50,24 @@ limitations under the License.
   </a>
   <!-- Header -->
   <header>
-    <h1 class="l--page">Tinker With a <b>Neural Network</b> <span class="optional">Right Here </span>in Your Browser.<br>Don’t Worry, You Can’t Break It. We Promise.</h1>
+    <h1 class="l--page"><b>Projet Playground SVM/NN</b></h1>
   </header>
 
   <!-- Top Controls -->
   <div id="top-controls">
+    <input type='file' accept='text/plain' onchange='openFile(event)'><br>
+    <script>
+      var openFile = function(event) {
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function(){
+          sessionStorage.setItem("textFile",reader.result);
+          //alert("LocalStorage OK !!!");
+        };
+        reader.readAsText(input.files[0]);
+        window.location.reload();
+      };
+    </script>
     <div class="container l--page">
       <div class="timeline-controls">
         <button class="mdl-button mdl-js-button mdl-button--icon ui-resetButton" id="reset-button" title="Reset the network">
@@ -175,6 +188,9 @@ limitations under the License.
           </div>
           <div class="dataset" title="File">
             <canvas class="data-thumbnail" data-dataset="file"></canvas>
+          </div>
+          <div class="dataset" title="FileInput">
+            <canvas class="data-thumbnail" data-dataset="fileInput"></canvas>
           </div>
         </div>
       </div>
