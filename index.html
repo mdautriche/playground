@@ -62,7 +62,6 @@ limitations under the License.
         var reader = new FileReader();
         reader.onload = function(){
           sessionStorage.setItem("textFile",reader.result);
-          //alert("LocalStorage OK !!!");
         };
         reader.readAsText(input.files[0]);
         window.location.reload();

@@ -50,6 +50,7 @@ export function shuffle(array: any[]): void {
 
 export type DataGenerator = (numSamples: number, noise: number) => Example2D[];
 
+//Fonction de traitement de la chaine de caractère extraite du fichier.
 function extractionDataFile(textFile: string): Example2D[] {
 	let points: Example2D[] = [];
 
@@ -103,6 +104,7 @@ export function classifyFileData(numSamples: number, noise: number): Example2D[]
        var fichierBrut: XMLHttpRequest = new XMLHttpRequest();
        fichierBrut.open("GET", fichier, false);
        fichierBrut.send();
+       //On peut récupérer puis traiter le texte du fichier
        var textFile: string = fichierBrut.responseText;
        points = extractionDataFile(textFile);
    }
