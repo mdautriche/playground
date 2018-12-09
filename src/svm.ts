@@ -14,7 +14,7 @@
   */
   export type trainstats = {iters: number};
   export class Svm{
-    private data;
+    private data : [[number, number]];
     private labels;
     private options;
     private kernelType;
@@ -30,8 +30,7 @@
     constructor(){}
 
     // data is NxD array of floats. labels are 1 or -1.
-    train(data, labels, options) {
-
+    train(data: [[number, number]], labels: number[], options) {
       this.data = data;
       this.labels = labels;
       this.options = options;
@@ -42,7 +41,7 @@
       var alphatol = this.options.alphatol || 1e-7; // non-support vectors for space and time efficiency are truncated. To guarantee correct result set this to 0 to do no truncating. If you want to increase efficiency, experiment with setting this little higher, up to maybe 1e-4 or so.
       var maxiter = this.options.maxiter || 10000; // max number of iterations
       var numpasses = this.options.numpasses || 10; // how many passes over data with no change before we halt? Increase for more precision.
-      
+
       // instantiate kernel according to this.options. kernel can be given as string or as a custom function
       var kernel = linearKernel;
       this.kernelType = "linear";
@@ -159,10 +158,17 @@
         this.w = new Array(this.D);
         for(var j=0;j<this.D;j++) {
           var s= 0.0;
+          //alert("N: "+this.N+"//"+this.labels.length);
           for(var i=0;i<this.N;i++) {
-            s+= this.alpha[i] * this.labels[i] * this.data[i][j];
+            //alert("s: "+s+"/ alpha: "+this.alpha[i]+"/ label: "+this.labels[i]+"/ data: "+this.data[i][j]);
+            s = s + this.alpha[i] * this.labels[i] * this.data[i][j];
+            if(i == this.N-1){
+              //alert("s: "+s+"/ alpha: "+this.alpha[i]+"/ label: "+this.labels[i]+"/ data: "+this.data[i][j]);
+              //alert("s: "+s);
+            }
           }
           this.w[j] = s;
+          //alert("Train in this.w = "+this.w);
           this.usew_ = true;
         }
       } else {
@@ -173,7 +179,7 @@
         // But! We only need to store the support vectors for evaluation of testing
         // instances. So filter here based on this.alpha[i]. The training data
         // for which this.alpha[i] = 0 is irrelevant for future. 
-        var newdata = [];
+        var newdata: [[number, number]] = [[0,0]];
         var newlabels = [];
         var newalpha = [];
         for(var i=0;i<this.N;i++) {
@@ -192,7 +198,7 @@
         this.N = this.data.length;
         //console.log("filtered training data from %d to %d support vectors.", data.length, this.data.length);
       }
-      var trainstats: trainstats;
+      var trainstats: trainstats
       //trainstats.iters = iter;
       return trainstats;
     } 
@@ -201,26 +207,25 @@
     // this is the core prediction function. All others are for convenience mostly
     // and end up calling this one somehow.
     marginOne(inst) {
-
       var f: number = this.b;
       // if the linear kernel was used and w was computed and stored,
       // (i.e. the svm has fully finished training)
       // the internal class variable usew_ will be set to true.
       if(this.usew_) {
-
         // we can speed this up a lot by using the computed weights
         // we computed these during train(). This is significantly faster
         // than the version below
         for(var j=0;j<this.D;j++) {
-          f += inst[j] * this.w[j];
+          f = f + inst[j] * this.w[j];
         }
 
       } else {
         for(var i=0;i<this.N;i++) {
-          alert("alpha: "+this.alpha[i]+"/ label: "+this.labels[i]+"/ data: "+this.data[i]);
-          f += this.alpha[i] * this.labels[i] * this.kernel(inst, this.data[i]);
+          //alert("alpha: "+this.alpha[i]+"/ label: "+this.labels[i]+"/ data: "+this.data[i]);
+          f = f + this.alpha[i] * this.labels[i] * this.kernel(inst, this.data[i]);
         }
       }
+      //alert(f);
       return f;
     }
     
@@ -229,14 +234,13 @@
     }
     
     // data is an NxD array. Returns array of margins.
-    margins(): number[] {
+    margins(dataMarg: [[number, number]]): number[] {
       // go over support vectors and accumulate the prediction. 
-      var N: number = this.data.length;
-      //alert("train 1");
+      var N: number = dataMarg.length;
       var margins: number[] = [];
-      //alert("train 1");
       for(var i=0;i<N;i++) {
-        margins.push(this.marginOne(this.data[i]));
+        //alert(this.marginOne(this.data[i]));
+        margins.push(this.marginOne(dataMarg[i]));
       }
       return margins;
     }
@@ -249,8 +253,8 @@
     }
 
     // data is NxD array. Returns array of 1 or -1, predictions
-    predict() {
-      var margs = this.margins();
+    predict(dataMarg: [[number, number]]) {
+      var margs = this.margins(dataMarg);
       for(var i=0;i<margs.length;i++) {
         margs[i] = margs[i] > 0 ? 1 : -1;
       }

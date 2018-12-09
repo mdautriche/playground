@@ -469,16 +469,17 @@ function updateUI(firstStep = false) {
       heatmapSquare.push([i,k]);
     }
   }
-  var marginsHeatmap: number[][] = new Array(100);
-  for (var i = 0; i < 100; ++i) {
-    marginsHeatmap[i] = new Array(100);
+  var marginsHeatmap: number[][] = new Array(length);
+  for (var i = 0; i < length; ++i) {
+    marginsHeatmap[i] = new Array(length);
   }
   if(train){
-    var margins: number[] = svmA.margins();
+    var margins: number[] = svmA.margins(heatmapSquare);
     let j = 0;
     for (var i = 0; i < length; ++i) {
       for (var k = 0; k < length; ++k) {
         marginsHeatmap[i][k] = margins[j];
+        //alert(marginsHeatmap[i][k]);
         j++;
       }
     }
@@ -489,8 +490,8 @@ function updateUI(firstStep = false) {
       }
     }
   }
-  alert("updateUI Out");
   heatMap.updateBackground(marginsHeatmap, state.discretize);
+  alert("updateUI Out");
 
   function zeroPad(n: number): string {
     let pad = "000000";
@@ -533,13 +534,13 @@ function constructInput(x: number, y: number): number[] {
 }
 
 function oneStep(): void {
-  //alert("OneStep Inside");
+  iter++;
   let trainDataSvm: [[number, number]] = [[0,0]];
   let k: number = 0;
   for (var i of trainData) {
       trainDataSvm.push([i.x, i.y]);
   }
-  //alert("After first loop");
+  trainDataSvm.shift();
   k = 0;
   let trainLabels: number[] = [];
   for (var i of trainData) {
@@ -548,7 +549,6 @@ function oneStep(): void {
   }
   svmA.train(trainDataSvm, trainLabels, {C: 1.0});
   train = true;
-  alert("OneStep Out");
   updateUI();
 }
 
