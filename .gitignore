@@ -4,3 +4,5 @@ dist/
 *.log
 .vscode
 package-lock.json
+package-lock.json
+package.json
