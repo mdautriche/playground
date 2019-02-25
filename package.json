@@ -28,7 +28,7 @@
     "typescript": "2.1.4",
     "typings": "^0.7.9",
     "uglify-js": "^2.8.29",
-    "watchify": "3.9.0"
+    "watchify": "^3.11.1"
   },
   "dependencies": {
     "d3": "^3.5.16",
