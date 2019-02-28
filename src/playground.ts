@@ -464,11 +464,12 @@ function getLoss(network: nn.Node[][], dataPoints: Example2D[]): number {
 function updateUI(firstStep = false) {
   let heatmapSquare: [[number, number]] = [[0,0]];
   let length: number = 100;
-  for (var i = 0; i < length; ++i) {
-    for (var k = 1; k < length; ++k) {
+  for (var i = 0; i < length; i++) {
+    for (var k = 0; k < length; k++) {
       heatmapSquare.push([i,k]);
     }
   }
+  heatmapSquare.shift();
   var marginsHeatmap: number[][] = new Array(length);
   for (var i = 0; i < length; ++i) {
     marginsHeatmap[i] = new Array(length);
@@ -486,7 +487,7 @@ function updateUI(firstStep = false) {
   }else{
     for (var i = 0; i < length; ++i) {
       for (var k = 0; k < length; ++k) {
-        marginsHeatmap[i][k] = 1;
+        marginsHeatmap[i][k] = -1;
       }
     }
   }

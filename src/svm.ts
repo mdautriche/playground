@@ -6,7 +6,7 @@
   /*
     This is a binary SVM and is trained using the SMO algorithm.
     Reference: "The Simplified SMO Algorithm" (http://math.unt.edu/~hsp0009/smo.pdf)
-    
+
     Simple usage example:
     svm = svmjs.SVM();
     svm.train(data, labels);
@@ -19,8 +19,8 @@
     private options;
     private kernelType;
     private rbfSigma;
-    private kernel; 
-    private N; 
+    private kernel;
+    private N;
     private D;
     private alpha;
     private b;
@@ -48,11 +48,11 @@
       if("kernel" in this.options) {
         if(typeof this.options.kernel === "string") {
           // kernel was specified as a string. Handle these special cases appropriately
-          if(this.options.kernel === "linear") { 
-            this.kernelType = "linear"; 
-            kernel = linearKernel; 
+          if(this.options.kernel === "linear") {
+            this.kernelType = "linear";
+            kernel = linearKernel;
           }
-          if(this.options.kernel === "rbf") { 
+          if(this.options.kernel === "rbf") {
             var rbfSigma = this.options.rbfsigma || 0.5;
             this.rbfSigma = rbfSigma; // back this up
             this.kernelType = "rbf";
@@ -89,19 +89,19 @@
       var iter: number = 0;
       var passes = 0;
       while(passes < numpasses && iter < maxiter) {
-        
+
         var alphaChanged = 0;
         for(var i=0;i<N;i++) {
-        
+
           var Ei= this.marginOne(this.data[i]) - this.labels[i];
           if( (this.labels[i]*Ei < -tol && this.alpha[i] < C)
            || (this.labels[i]*Ei > tol && this.alpha[i] > 0) ){
-            
+
             // alpha_i needs updating! Pick a j to update it with
             var j = i;
             while(j === i) j= randi(0, this.N);
             var Ej= this.marginOne(this.data[j]) - this.labels[j];
-            
+
             // calculate L and H bounds for j to ensure we're in [0 C]x[0 C] box
             var ai= this.alpha[i];
             var aj= this.alpha[j];
@@ -113,22 +113,22 @@
               L = Math.max(0, aj-ai);
               H = Math.min(C, C+aj-ai);
             }
-            
+
             if(Math.abs(L - H) < 1e-4) continue;
 
             var eta = 2*this.kernelResult(i,j) - this.kernelResult(i,i) - this.kernelResult(j,j);
             if(eta >= 0) continue;
-            
+
             // compute new alpha_j and clip it inside [0 C]x[0 C] box
             // then compute alpha_i based on it.
             var newaj = aj - this.labels[j]*(Ei-Ej) / eta;
             if(newaj>H) newaj = H;
             if(newaj<L) newaj = L;
-            if(Math.abs(aj - newaj) < 1e-4) continue; 
+            if(Math.abs(aj - newaj) < 1e-4) continue;
             this.alpha[j] = newaj;
             var newai = ai + this.labels[i]*this.labels[j]*(aj - newaj);
             this.alpha[i] = newai;
-            
+
             // update the bias term
             var b1 = this.b - Ei - this.labels[i]*(newai-ai)*this.kernelResult(i,i)
                      - this.labels[j]*(newaj-aj)*this.kernelResult(i,j);
@@ -137,19 +137,19 @@
             this.b = 0.5*(b1+b2);
             if(newai > 0 && newai < C) this.b= b1;
             if(newaj > 0 && newaj < C) this.b= b2;
-            
+
             alphaChanged++;
-            
+
           } // end alpha_i needed updating
         } // end for i=1..N
-        
+
         iter++;
         //console.log("iter number %d, alphaChanged = %d", iter, alphaChanged);
         if(alphaChanged == 0) passes++;
         else passes= 0;
-        
+
       } // end outer loop
-      
+
       // if the user was using a linear kernel, lets also compute and store the
       // weights. This will speed up evaluations during testing time
       if(this.kernelType === "linear") {
@@ -178,7 +178,7 @@
 
         // But! We only need to store the support vectors for evaluation of testing
         // instances. So filter here based on this.alpha[i]. The training data
-        // for which this.alpha[i] = 0 is irrelevant for future. 
+        // for which this.alpha[i] = 0 is irrelevant for future.
         var newdata: [[number, number]] = [[0,0]];
         var newlabels = [];
         var newalpha = [];
@@ -201,8 +201,8 @@
       var trainstats: trainstats
       //trainstats.iters = iter;
       return trainstats;
-    } 
-    
+    }
+
     // inst is an array of length D. Returns margin of given example
     // this is the core prediction function. All others are for convenience mostly
     // and end up calling this one somehow.
@@ -228,14 +228,14 @@
       //alert(f);
       return f;
     }
-    
-    predictOne(inst) { 
-      return this.marginOne(inst) > 0 ? 1 : -1; 
+
+    predictOne(inst) {
+      return this.marginOne(inst) > 0 ? 1 : -1;
     }
-    
+
     // data is an NxD array. Returns array of margins.
     margins(dataMarg: [[number, number]]): number[] {
-      // go over support vectors and accumulate the prediction. 
+      // go over support vectors and accumulate the prediction.
       var N: number = dataMarg.length;
       var margins: number[] = [];
       for(var i=0;i<N;i++) {
@@ -260,13 +260,13 @@
       }
       return margs;
     }
-    
-    // THIS FUNCTION IS NOW DEPRECATED. WORKS FINE BUT NO NEED TO USE ANYMORE. 
+
+    // THIS FUNCTION IS NOW DEPRECATED. WORKS FINE BUT NO NEED TO USE ANYMORE.
     // LEAVING IT HERE JUST FOR BACKWARDS COMPATIBILITY FOR A WHILE.
     // if we trained a linear svm, it is possible to calculate just the weights and the offset
     // prediction is then yhat = sign(X * w + b)
     getWeights() {
-      
+
       // DEPRECATED
       var w= new Array(this.D);
       for(var j=0;j<this.D;j++) {
@@ -280,7 +280,7 @@
     }
 
     toJSON() {
-      
+
       if(this.kernelType === "custom") {
         console.log("Can't save this SVM because it's using custom, unsupported kernel...");
         return {};
@@ -292,13 +292,13 @@
       json.b = this.b;
 
       json.kernelType = this.kernelType;
-      if(this.kernelType === "linear") { 
+      if(this.kernelType === "linear") {
         // just back up the weights
-        json.w = this.w; 
+        json.w = this.w;
       }
-      if(this.kernelType === "rbf") { 
+      if(this.kernelType === "rbf") {
         // we need to store the support vectors and the sigma
-        json.rbfSigma = this.rbfSigma; 
+        json.rbfSigma = this.rbfSigma;
         json.data = this.data;
         json.labels = this.labels;
         json.alpha = this.alpha;
@@ -306,25 +306,25 @@
 
       return json;
     }
-    
+
     fromJSON(json) {
-      
+
       this.N = json.N;
       this.D = json.D;
       this.b = json.b;
 
       this.kernelType = json.kernelType;
-      if(this.kernelType === "linear") { 
+      if(this.kernelType === "linear") {
 
-        // load the weights! 
-        this.w = json.w; 
-        this.usew_ = true; 
+        // load the weights!
+        this.w = json.w;
+        this.usew_ = true;
         this.kernel = linearKernel; // this shouldn't be necessary
       }
       else if(this.kernelType == "rbf") {
 
         // initialize the kernel
-        this.rbfSigma = json.rbfSigma; 
+        this.rbfSigma = json.rbfSigma;
         this.kernel = makeRbfKernel(this.rbfSigma);
 
         // load the support vectors
@@ -336,19 +336,19 @@
       }
     }
   }
-  
+
   // Kernels
   function makeRbfKernel(sigma) {
     return function(v1, v2) {
       var s=0;
-      for(var q=0;q<v1.length;q++) { s += (v1[q] - v2[q])*(v1[q] - v2[q]); } 
+      for(var q=0;q<v1.length;q++) { s += (v1[q] - v2[q])*(v1[q] - v2[q]); }
       return Math.exp(-s/(2.0*sigma*sigma));
     }
   }
-  
+
   function linearKernel(v1, v2) {
-    var s=0; 
-    for(var q=0;q<v1.length;q++) { s += v1[q] * v2[q]; } 
+    var s=0;
+    for(var q=0;q<v1.length;q++) { s += v1[q] * v2[q]; }
     return s;
   }
 
