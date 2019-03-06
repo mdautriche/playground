@@ -492,7 +492,7 @@ function updateUI(firstStep = false) {
     }
   }
   heatMap.updateBackground(marginsHeatmap, state.discretize);
-  alert("updateUI Out");
+  //alert("updateUI Out");
 
   function zeroPad(n: number): string {
     let pad = "000000";
@@ -534,21 +534,27 @@ function constructInput(x: number, y: number): number[] {
   return input;
 }
 
-function oneStep(): void {
-  iter++;
-  let trainDataSvm: [[number, number]] = [[0,0]];
-  let k: number = 0;
-  for (var i of trainData) {
+function trainSvm(): void {
+     let trainDataSvm: [[number, number]] = [[0,0]];
+    let k: number = 0;
+    for (var i of trainData) {
       trainDataSvm.push([i.x, i.y]);
-  }
-  trainDataSvm.shift();
-  k = 0;
-  let trainLabels: number[] = [];
-  for (var i of trainData) {
+    }
+    trainDataSvm.shift();
+    k = 0;
+    let trainLabels: number[] = [];
+    for (var i of trainData) {
       trainLabels.push(i.label);
       k++;
+    }
+    svmA.train(trainDataSvm, trainLabels, {C: 1.0});  //TODO 
+}
+
+function oneStep(): void {
+  iter++;
+  if(train == false){
+    trainSvm();
   }
-  svmA.train(trainDataSvm, trainLabels, {C: 1.0});
   train = true;
   updateUI();
 }
