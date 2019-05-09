@@ -28,7 +28,7 @@ const NUM_SHADES = 30;
  * Draws a heatmap using canvas. Used for showing the learned decision
  * boundary of the classification algorithm. Can also draw data points
  * using an svg overlayed on top of the canvas heatmap.
- */
+ */ 
 export class HeatMap {
   private settings: HeatMapSettings = {
     showAxes: false,
@@ -181,6 +181,7 @@ export class HeatMap {
   private updateCircles(container: d3.Selection<any>, points: Example2D[]) {
     // Keep only points that are inside the bounds.
     let xDomain = this.xScale.domain();
+    //alert("xDomaine Heatmap"+xDomain);
     let yDomain = this.yScale.domain();
     points = points.filter(p => {
       return p.x >= xDomain[0] && p.x <= xDomain[1]

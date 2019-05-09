@@ -14,6 +14,7 @@
   */
   export type trainstats = {iters: number};
   export class Svm{
+    private marginsCheck: number[] = [];
     private data : [[number, number]];
     private labels;
     private options;
@@ -225,6 +226,7 @@
           f = f + this.alpha[i] * this.labels[i] * this.kernel(inst, this.data[i]);
         }
       }
+      this.marginsCheck.push(f);
       //alert(f);
       return f;
     }
@@ -235,13 +237,15 @@
 
     // data is an NxD array. Returns array of margins.
     margins(dataMarg: [[number, number]]): number[] {
+      //alert("marginsCheck: "+this.marginsCheck.length);
       // go over support vectors and accumulate the prediction.
       var N: number = dataMarg.length;
       var margins: number[] = [];
+      //alert(this.data.length);
       for(var i=0;i<N;i++) {
-        //alert(this.marginOne(this.data[i]));
-        margins.push(this.marginOne(dataMarg[i]));
+          margins.push(this.marginOne(dataMarg[i]));
       }
+      //alert("SVM.ts margins = "+margins);
       return margins;
     }
 
@@ -369,13 +373,3 @@
     for(var i=0;i<n;i++) { arr[i]= 0; }
     return arr;
   }
-/*
-  // export public members
-  exports = exports || {};
-  exports.SVM = SVM;
-  exports.makeRbfKernel = makeRbfKernel;
-  exports.linearKernel = linearKernel;
-  return exports;
-
-})(typeof module != 'undefined' && module.exports);  // add exports to module.exports if in node.js
-*/

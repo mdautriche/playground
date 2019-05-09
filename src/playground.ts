@@ -222,6 +222,8 @@ function makeGUI() {
     generateData();
     parametersChanged = true;
     reset();
+    heatMap.updateBackground(iniHeatMap(), state.discretize); //Réinitialiser le fond lors du changement de jeu de données.
+    train = false; //Réinitialiser la marge pour le nouveau jeu de données choisit.
   });
 
   let datasetKey = getKeyFromValue(datasets, state.dataset);
@@ -449,50 +451,57 @@ function updateDecisionBoundary(network: nn.Node[][], firstTime: boolean) {
   }
 }
 
-/*
-function getLoss(network: nn.Node[][], dataPoints: Example2D[]): number {
-  let loss = 0;
-  for (let i = 0; i < dataPoints.length; i++) {
-    let dataPoint = dataPoints[i];
-    let input = constructInput(dataPoint.x, dataPoint.y);
-    let output = nn.forwardProp(network, input);
-    loss += nn.Errors.SQUARE.error(output, dataPoint.label);
+function iniHeatMap(): number[][] {
+  let length: number = 100;
+  var iniHeatmap: number[][] = new Array(length); //marginsHeatmap est un tableau contenant les marges des points de la grille (Format Playground).
+  for (var i = 0; i < length; ++i) {
+    iniHeatmap[i] = new Array(length);
   }
-  return loss / dataPoints.length;
+  for(var i = 0; i < length; i++){ //Boucle pour initialiser l'interface de la grille (Ici couleur verte de base).
+    for(var k = 0; k < length; k++){
+      iniHeatmap[i][k] = -1;
+    }
+  }
+  return iniHeatmap;
 }
-*/
+
 function updateUI(firstStep = false) {
-  let heatmapSquare: [[number, number]] = [[0,0]];
+  /*Fonction pour remplir la grille avec ses coordonnées pour ensuite les envoyer à SVM 
+  afin de calculer les marges des points de la grille.*/
+  let heatmapSquare: [[number, number]] = [[0,0]]; // heatmapSquare est un tableau contenant les coordonées des points de la grille (Format SVM).
   let length: number = 100;
   for (var i = 0; i < length; i++) {
     for (var k = 0; k < length; k++) {
-      heatmapSquare.push([i,k]);
+      heatmapSquare.push([(-6+(i*(12/100))),(6-(k*(12/100)))]); /*Transformation des pixels en points de la HeatMap.*/
     }
   }
   heatmapSquare.shift();
-  var marginsHeatmap: number[][] = new Array(length);
-  for (var i = 0; i < length; ++i) {
-    marginsHeatmap[i] = new Array(length);
-  }
+  var marginsHeatmap: number[][] = iniHeatMap();
   if(train){
-    var margins: number[] = svmA.margins(heatmapSquare);
+    var margins: number[] = svmA.margins(heatmapSquare); //margins est un tableau contenant uniquement les marges des points de la grille (Format transition entre SVM et Playground).
+    //alert("HeatmapSquare = "+heatmapSquare);
+    //alert("Playground.ts margins = "+margins);
+    //alert(heatmapSquare.length);
+    //margins.length = 250;
+    //length = 100;
     let j = 0;
-    for (var i = 0; i < length; ++i) {
-      for (var k = 0; k < length; ++k) {
-        marginsHeatmap[i][k] = margins[j];
-        //alert(marginsHeatmap[i][k]);
+    for (var i = 0; i < length; i++) {
+      for (var k = 0; k < length; k++) {
+        marginsHeatmap[i][k] = margins[j]; /*Remplissage de marginsHeatmap avec les marges contenues dans margins.*/
         j++;
       }
     }
   }else{
-    for (var i = 0; i < length; ++i) {
+    /*
+    for (var i = 0; i < length; ++i) { //Boucle pour initialiser l'interface de la grille (Ici couleur verte de base).
       for (var k = 0; k < length; ++k) {
         marginsHeatmap[i][k] = -1;
       }
     }
+    */
   }
+  //alert(marginsHeatmap);
   heatMap.updateBackground(marginsHeatmap, state.discretize);
-  //alert("updateUI Out");
 
   function zeroPad(n: number): string {
     let pad = "000000";
@@ -533,9 +542,10 @@ function constructInput(x: number, y: number): number[] {
   }
   return input;
 }
-
+/* Fonction permettant de convertir les jeu de données de Playground vers SVM.
+*/
 function trainSvm(): void {
-     let trainDataSvm: [[number, number]] = [[0,0]];
+    let trainDataSvm: [[number, number]] = [[0,0]];
     let k: number = 0;
     for (var i of trainData) {
       trainDataSvm.push([i.x, i.y]);
@@ -545,9 +555,13 @@ function trainSvm(): void {
     let trainLabels: number[] = [];
     for (var i of trainData) {
       trainLabels.push(i.label);
+      if(i.label != 1 &&  i.label != -1){
+      alert("Erreur label diff de 1 / -1, Label = "+i.label);
+      }
       k++;
     }
-    svmA.train(trainDataSvm, trainLabels, {C: 1.0});  //TODO 
+    //alert(trainDataSvm.length);
+    svmA.train(trainDataSvm, trainLabels, {C: 1.0});
 }
 
 function oneStep(): void {
