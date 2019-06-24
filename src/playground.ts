@@ -165,9 +165,13 @@ let linkWidthScale = d3.scale.linear()
   .domain([0, 5])
   .range([1, 10])
   .clamp(true);
+let color1: string = "#087000";
+let color2: string = "#ff0000";
+sessionStorage.setItem("color1",color1);
+sessionStorage.setItem("color2",color2);
 let colorScale = d3.scale.linear<string>()
                      .domain([-1, 0, 1])
-                     .range(["#087000", "#e8eaeb", "#ff0000"])
+                     .range([color1, "#e8eaeb", color2])
                      .clamp(true);
 let iter = 0;
 let trainData: Example2D[] = [];
@@ -466,7 +470,7 @@ function iniHeatMap(): number[][] {
 }
 
 function updateUI(firstStep = false) {
-  /*Fonction pour remplir la grille avec ses coordonnées pour ensuite les envoyer à SVM 
+  /*Fonction pour remplir la grille avec ses coordonnées pour ensuite les envoyer à SVM
   afin de calculer les marges des points de la grille.*/
   let heatmapSquare: [[number, number]] = [[0,0]]; // heatmapSquare est un tableau contenant les coordonées des points de la grille (Format SVM).
   let length: number = 100;
@@ -547,20 +551,19 @@ function constructInput(x: number, y: number): number[] {
 function trainSvm(): void {
     let trainDataSvm: [[number, number]] = [[0,0]];
     let k: number = 0;
-    for (var i of trainData) {
+    for (var i of trainData) { //Decoupage du tableau de données provenant de Playground, on récupère ici les coordonées.
       trainDataSvm.push([i.x, i.y]);
     }
     trainDataSvm.shift();
     k = 0;
     let trainLabels: number[] = [];
-    for (var i of trainData) {
+    for (var i of trainData) { //On re-utilise le même tableau provenant de Playground pour en extraire les labels sockes dans un deuxième tableau. 
       trainLabels.push(i.label);
       if(i.label != 1 &&  i.label != -1){
       alert("Erreur label diff de 1 / -1, Label = "+i.label);
       }
       k++;
     }
-    //alert(trainDataSvm.length);
     svmA.train(trainDataSvm, trainLabels, {C: 1.0});
 }
 

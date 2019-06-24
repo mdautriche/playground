@@ -35,7 +35,7 @@ limitations under the License.
   <meta name="twitter:image:height" content="295">
 
   <meta name="author" content="Daniel Smilkov and Shan Carter">
-  <title>A Neural Network Playground</title>
+  <title>Projet Playground SVM/NN</title>
   <link rel="stylesheet" href="bundle.css" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons" rel="stylesheet" type="text/css">
   <script src="lib.js"></script>
@@ -219,7 +219,7 @@ limitations under the License.
     </div>
 
     <!-- Features Column -->
-    <div class="column features">
+    <div class="column features" style="display:none;">
       <h4>Features</h4>
       <p>Which properties do you want to feed in?</p>
       <div id="network">
@@ -265,7 +265,7 @@ limitations under the License.
     </div>
 
     <!-- Hidden Layers Column -->
-    <div class="column hidden-layers">
+    <div class="column hidden-layers" style="display:None;">
       <h4>
         <div class="ui-numHiddenLayers">
           <button id="add-layers" class="mdl-button mdl-js-button mdl-button--icon">
@@ -310,6 +310,12 @@ limitations under the License.
                 <stop offset="50%" stop-color="#e8eaeb" stop-opacity="1"></stop>
                 <stop offset="100%" stop-color="#0877bd" stop-opacity="1"></stop>
               </linearGradient>
+              <script language="JavaScript" type="text/javascript">
+                var color1 = sessionStorage.getItem("color1");
+                var color2 = sessionStorage.getItem("color2");
+                document.getElementById('gradient').childNodes[1].setAttribute('stop-color', color1);
+                document.getElementById('gradient').childNodes[5].setAttribute('stop-color', color2);
+              </script>
             </defs>
             <g class="core" transform="translate(3, 0)">
               <rect width="144" height="10" style="fill: url('#gradient');"></rect>

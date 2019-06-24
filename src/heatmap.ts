@@ -28,7 +28,7 @@ const NUM_SHADES = 30;
  * Draws a heatmap using canvas. Used for showing the learned decision
  * boundary of the classification algorithm. Can also draw data points
  * using an svg overlayed on top of the canvas heatmap.
- */ 
+ */
 export class HeatMap {
   private settings: HeatMapSettings = {
     showAxes: false,
@@ -67,7 +67,7 @@ export class HeatMap {
     // Get a range of colors.
     let tmpScale = d3.scale.linear<string, string>()
         .domain([0, .5, 1])
-        .range(["#087000", "#e8eaeb", "#ff0000"])
+        .range([sessionStorage.getItem("color1"), "#e8eaeb", sessionStorage.getItem("color2")])
         .clamp(true);
     // Due to numerical error, we need to specify
     // d3.range(0, end + small_epsilon, step)

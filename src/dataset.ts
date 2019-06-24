@@ -97,7 +97,7 @@ export function classifyInputFileData(): Example2D[] {
 //Fonction lecture fichier contenant un jeu de données depuis le serveur.
 export function classifyFileData(numSamples: number, noise: number): Example2D[] {
 	let points: Example2D[] = [];
-	let fichier: string ="test.txt";
+	let fichier: string ="dataFile/data.txt";
 
 	function lireFichierTexte(fichier){
        //On lance la requête pour récupérer le fichier
